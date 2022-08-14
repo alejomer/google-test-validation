@@ -1,8 +1,11 @@
 /// <reference types="cypress" />
 
 const searchBar = (term) => {
-  cy.get(".RNNXgb").type(term + "{enter}");
+  cy.get(".RNNXgb")
+    .should("be.visible")
+    .type(term + "{enter}");
   cy.wait("@googleSearch");
+  cy.url().should("include", "/search");
 };
 const validateSettingsLink = () => {
   cy.get(".Q3DXx")
@@ -21,8 +24,14 @@ describe("Validate google test cases", () => {
     cy.visit(Cypress.env("baseUrl"));
   });
   it("1. validate can search for any term using single search bar", () => {
+    //Validate search by string
     searchBar("cucumber testing");
-    cy.url().should("include", "/search");
+    cy.get("#logo").click();
+    //Validate search by numbers
+    searchBar("1123581321");
+    cy.get("#logo").click();
+    //Validate search by special characters
+    searchBar("!#$%&/()");
     validateSettingsLink();
   });
   it("2. validate the user can see how many results were found", () => {
